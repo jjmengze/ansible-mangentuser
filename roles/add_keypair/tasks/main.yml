@@ -1,0 +1,28 @@
+---
+
+- name: Determine existing public key
+  shell: 
+    cmd: expirationDate=$(date --date='{{ expiryInterval }} days ago' "+%Y-%m-%d");az storage blob list --account-name {{ storageAccountName }} --container-name {{ container }} --query "[].{key:name, lastModified:properties.lastModified}[?lastModified>='${expirationDate}']" --output table  --auth-mode key --account-key {{ lookup('env','accountKey') }} | awk '!(NR>=1 && NR<=2){print $0}'
+  register: existingKeys
+
+- name: Determine new keypairs
+  set_fact:
+    newKeypairs: "{{ users | difference(existingKeys.stdout_lines) }}"
+
+- name: Generate an OpenSSH keypair
+  openssh_keypair:
+    path: /tmp/{{ item }}_id_rsa
+  with_items: "{{ newKeypairs }}"
+
+- name: Upload public key into Azure storage
+  azure_rm_storageblob:
+    client_id: "{{ clientId }}"
+    secret: "{{ lookup('env','secret') }}"
+    subscription_id: "{{ subscriptionId }}"
+    tenant: "{{ tenant }}"
+    resource_group: "{{ resourceGroup }}"
+    storage_account_name: "{{ storageAccountName }}"
+    container: "{{ container }}"
+    blob: "{{ item }}"
+    src: "/tmp/{{ item }}_id_rsa.pub"
+  with_items: "{{ newKeypairs }}"

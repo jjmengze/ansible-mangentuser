@@ -1,0 +1,14 @@
+- name: Ensure the group exists
+  group:
+    name: "{{ group }}"
+    state: present
+
+- name: Add the user
+  user:
+    name: "{{ item }}"
+    group: "{{ group }}"
+    shell: /bin/bash
+    create_home: yes
+    state: present
+    expires: -1
+  with_items: "{{ users }}"

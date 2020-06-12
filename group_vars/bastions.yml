@@ -1,0 +1,3 @@
+# Default varibales
+group: cloud
+ansibleUser: cloud-user

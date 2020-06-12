@@ -1,0 +1,15 @@
+---
+- name: Upload template user barshrc
+  copy:
+    src: ".bashrc"
+    dest: "/etc/skel/.bashrc"
+
+- name: Upload rsyslog user history manifest
+  copy:
+    src: cmd.conf
+    dest: /etc/rsyslog.d/cmd.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - restart rsyslog

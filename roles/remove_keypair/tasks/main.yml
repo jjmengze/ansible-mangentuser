@@ -1,0 +1,17 @@
+---
+- name: Determine remove keypairs
+  set_fact:
+    removeKeypairs: "{{ existingKeys.stdout_lines | difference(users) }}"
+
+- name: Remove public key
+  azure_rm_storageblob:
+    client_id: "{{ clientId }}"
+    secret: "{{ lookup('env','secret') }}"
+    subscription_id: "{{ subscriptionId }}"
+    tenant: "{{ tenant }}"
+    resource_group: "{{ resourceGroup }}"
+    storage_account_name: "{{ storageAccountName }}"
+    container: "{{ container }}"
+    blob: "{{ item }}_id_ssh_rsa.pub"
+    state: absent
+  with_items: "{{ removeKeypairs }}"

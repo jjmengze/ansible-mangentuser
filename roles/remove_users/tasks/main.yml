@@ -1,0 +1,21 @@
+---
+- name: Determine existing users
+  shell: "ls -1 /home | grep -v {{ ansibleUser }}"
+  changed_when: false
+  register: existingUsers
+
+- name: Determine unregister users
+  set_fact:
+    unregisterUsers: "{{ existingUsers.stdout_lines | difference(users) }}"
+
+- name: Unregister user accounts
+  user:
+    name: "{{ item }}"
+    shell: /sbin/nologin
+  with_items: "{{ unregisterUsers }}"
+
+- name: Remove home directory
+  file:
+    path: "/home/{{ item }}"
+    state: absent
+  with_items: "{{ unregisterUsers }}"

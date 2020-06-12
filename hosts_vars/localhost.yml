@@ -1,0 +1,12 @@
+# Azure service principal
+clientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+subscriptionId: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+tenant: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+
+# Azure storage
+resourceGroup: 'test-rg'
+storageAccountName: 'testsa'
+container: 'userpublickey'
+
+# # User expiry interval
+expiryInterval: 90

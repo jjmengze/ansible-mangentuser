@@ -1,0 +1,22 @@
+---
+- name: Copy authorized key
+  copy:
+    src: "/tmp/{{ item }}_id_rsa.pub"
+    dest: "/tmp/{{ item }}_id_rsa.pub"
+  with_items: "{{ users }}"
+  ignore_errors: yes
+
+- name: Set authorized key taken from file
+  authorized_key:
+    user: "{{ item }}"
+    state: present
+    key: "{{ lookup('file', '/tmp/{{ item }}_id_rsa.pub') }}"
+  with_items: "{{ users }}"
+  ignore_errors: yes
+
+- name: Clear up public key
+  file:
+    path: "/tmp/{{ item }}_id_rsa.pub"
+    state: absent
+  with_items: "{{ users }}"
+  ignore_errors: yes
