@@ -15,4 +15,6 @@
 - hosts: bastions
   become: yes
   roles:
-    -  set_authorized_key
+    - set_authorized_key
+    - send_private_key
+

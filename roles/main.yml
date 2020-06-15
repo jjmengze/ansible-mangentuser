@@ -1,0 +1,13 @@
+---
+- name: Send e-mail to a bunch of users, attaching private key
+  mail:
+    to: "{{ item }}@fareastone.com.tw"
+    from: dmz-dind-runner@fortress.fareastone.com.tw
+    subject: Bastion access key
+    body: Please keep your key secret.
+    attach: "/tmp/ssh/{{ item }}_id_rsa"
+    host: 10.68.77.40
+    port: 25
+  with_items: "{{ users }}"
+  ignore_errors: yes
+
