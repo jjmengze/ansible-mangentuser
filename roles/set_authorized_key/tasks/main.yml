@@ -1,22 +1,28 @@
 ---
+- name: Create ssh directory
+  file:
+    path: /tmp/ssh
+    state: directory
+    mode: '0755'
+
 - name: Copy authorized key
   copy:
-    src: "/tmp/{{ item }}_id_rsa.pub"
-    dest: "/tmp/{{ item }}_id_rsa.pub"
+    src: "/tmp/ssh/{{ item }}_id_rsa.pub"
+    dest: "/tmp/ssh/{{ item }}_id_rsa.pub"
   with_items: "{{ users }}"
   ignore_errors: yes
+
 
 - name: Set authorized key taken from file
   authorized_key:
     user: "{{ item }}"
     state: present
-    key: "{{ lookup('file', '/tmp/{{ item }}_id_rsa.pub') }}"
+    key: "{{ lookup('file', '/tmp/ssh/{{ item }}_id_rsa.pub') }}"
   with_items: "{{ users }}"
   ignore_errors: yes
 
 - name: Clear up public key
   file:
-    path: "/tmp/{{ item }}_id_rsa.pub"
+    path: "/tmp/ssh"
     state: absent
-  with_items: "{{ users }}"
-  ignore_errors: yes
+

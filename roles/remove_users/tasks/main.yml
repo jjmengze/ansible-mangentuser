@@ -8,6 +8,12 @@
   set_fact:
     unregisterUsers: "{{ existingUsers.stdout_lines | difference(users) }}"
 
+- name: Check ansibleUser not in unregisterUsers
+  fail: 
+    msg: "ansibleUser in unregisterUsers"
+  when: "'cloud-user' in {{unregisterUsers}}"
+
+
 - name: Unregister user accounts
   user:
     name: "{{ item }}"

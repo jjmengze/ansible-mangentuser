@@ -1,0 +1,19 @@
+---
+- name: Determine existing keys
+
+  shell: "ls -1 /tmp/ssh | grep -v pub | sed 's/_id_rsa//g'"
+  changed_when: false
+  register: existingKeys
+
+- name: Send e-mail to a bunch of users, attaching private key
+  mail:
+    to: "{{ item }}@fareastone.com.tw"
+    from: dmz-dind-runner@fortress.fareastone.com.tw
+    subject: Bastion access key
+    body: Please keeping your key safe.
+    attach: "/tmp/ssh/{{ item }}_id_rsa"
+    host: 10.68.77.40
+    port: 25
+  with_items: "{{ existingKeys.stdout_lines }}"
+  ignore_errors: yes
+
